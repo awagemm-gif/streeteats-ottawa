@@ -1,0 +1,40 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="en">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>StreetEats Ottawa</title>\
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' />\
+    <link rel="stylesheet" href="style.css">\
+</head>\
+<body>\
+    <header>\
+        <h1>StreetEats Ottawa</h1>\
+        <p>Find amazing street food across the city. Data updates daily.</p>\
+        <input type="text" id="searchInput" placeholder="Search by name or food type...">\
+    </header>\
+\
+    <main>\
+        <div id="map"></div>\
+        <div id="vendor-list">\
+            <h2>All Vendors</h2>\
+            <div id="list-container"><!-- Vendors will be listed here by JavaScript --></div>\
+        </div>\
+    </main>\
+\
+    <footer>\
+        <p>Data sourced from <a href="https://open.ottawa.ca/" target="_blank">Open Ottawa</a>. Last updated: <span id="updateDate">Loading...</span></p>\
+    </footer>\
+\
+    <!-- Load scripts -->\
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>\
+    <script src="script.js"></script>\
+</body>\
+</html>}

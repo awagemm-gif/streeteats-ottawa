@@ -1,0 +1,65 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 // netlify/functions/fetchVendors.js\
+exports.handler = async function (event, context) \{\
+  // 1. URL of the ArcGIS Street Food Vendors API in GeoJSON format\
+  const ARCGIS_API_URL = "https://services.arcgis.com/G6F8XLCl5KtAlZ2G/arcgis/rest/services/Street_Food_Vendors_2023/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson";\
+\
+  try \{\
+    // 2. Fetch the data from the ArcGIS server\
+    const response = await fetch(ARCGIS_API_URL);\
+    if (!response.ok) \{\
+      throw new Error(`ArcGIS API error! status: $\{response.status\}`);\
+    \}\
+    // 3. Parse the GeoJSON data\
+    const geojsonData = await response.json();\
+\
+    // 4. Check if we got the expected data structure\
+    if (!geojsonData.features || !Array.isArray(geojsonData.features)) \{\
+      throw new Error("Unexpected data format from ArcGIS API");\
+    \}\
+\
+    // 5. Format the data to be simpler for our front-end.\
+    // We'll extract the properties we need from each "feature".\
+    const vendors = geojsonData.features.map(feature => \{\
+      // The coordinates are stored as [longitude, latitude]\
+      const [longitude, latitude] = feature.geometry.coordinates;\
+\
+      return \{\
+        name: feature.properties.Trade_Name || 'Unnamed Vendor', // Use 'Trade_Name' from ArcGIS\
+        type: feature.properties.Licence || 'Vendor', // Use 'Licence' (e.g., Cart, Truck)\
+        location_description: feature.properties.Location_Description || 'Location not specified',\
+        designated_space: feature.properties.Designated_Space,\
+        longitude: longitude,\
+        latitude: latitude\
+        // You can add more properties from feature.properties here if needed\
+      \};\
+    \});\
+\
+    // 6. Send the cleaned-up data back to our website\
+    return \{\
+      statusCode: 200,\
+      headers: \{\
+        'Access-Control-Allow-Origin': '*', // Allows your website to access this\
+        'Cache-Control': 'public, max-age=43200' // Cache the data for 12 hours (43200 seconds)\
+      \},\
+      body: JSON.stringify(\{\
+        vendors: vendors,\
+        lastUpdated: new Date().toISOString()\
+      \})\
+    \};\
+  \} catch (error) \{\
+    // 7. If anything goes wrong, return an error\
+    console.error("Error fetching vendor data:", error);\
+    return \{\
+      statusCode: 500,\
+      headers: \{ 'Access-Control-Allow-Origin': '*' \},\
+      body: JSON.stringify(\{ error: "Failed to fetch vendor data from the city's server." \})\
+    \};\
+  \}\
+\};}
